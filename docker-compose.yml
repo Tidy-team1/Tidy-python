@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  tidy-python:
+    build: .
+    container_name: tidy-python
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../temp:/app/temp
+      - ../output:/app/output
+    restart: always
