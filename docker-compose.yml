@@ -1,12 +1,12 @@
 version: "3.9"
 
 services:
-  ppt-parser:
+  tidy-python:
     build: .
-    container_name: ppt-parser
+    container_name: tidy-python
     ports:
       - "8000:8000"
     volumes:
-      - ./temp:/app/temp
-      - ./output:/app/output
+      - ../temp:/app/temp
+      - ../output:/app/output
     restart: always
