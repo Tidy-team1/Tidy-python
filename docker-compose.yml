@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  ppt-parser:
+    build: .
+    container_name: ppt-parser
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./temp:/app/temp
+      - ./output:/app/output
+    restart: always
