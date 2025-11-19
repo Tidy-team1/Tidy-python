@@ -4,7 +4,16 @@
 
 ### 사전 요구사항
 
-- Docker
+- Docker 설치
+- 배포 전이라 공유 파일 디렉토리(output)의 위치를 야매로 정했습니다. 아래처럼 백, 프론트, 파이썬이 같은 디렉토리에 위치하게 해주세요.
+```
+root/
+├── tidy/                 # 백엔드
+├── Tidy-frontend/               # 프론트
+├── tidy-python/            # 파이썬
+├── temp/    # 임시 파일 저장 디렉토리
+└── output/      # 출력물 저장 디렉토리
+```
 
 ### Docker를 사용한 실행
 
@@ -21,6 +30,7 @@ docker-compose up -d
 **서비스 확인**
 - API 문서: http://localhost:8000/docs
 - 서비스 상태: http://localhost:8000
+
 
 ## 🐳 Docker 명령어
 
@@ -43,11 +53,4 @@ docker-compose up -d --build
 ```bash
 docker-compose logs -f
 ```
-
-## 📁 볼륨 마운트
-
-- `../temp:/app/temp`: 임시 파일 저장소
-- `../output:/app/output`: 변환된 이미지 출력 디렉토리
-
-
 
