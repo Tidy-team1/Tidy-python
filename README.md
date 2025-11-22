@@ -18,10 +18,6 @@ docker-compose up -d --build
 docker-compose up -d
 ```
 
-**서비스 확인**
-- API 문서: http://localhost:8000/docs
-- 서비스 상태: http://localhost:8000
-
 ## 🐳 Docker 명령어
 
 **서비스 시작**
@@ -43,11 +39,3 @@ docker-compose up -d --build
 ```bash
 docker-compose logs -f
 ```
-
-## 📁 볼륨 마운트
-
-- `../temp:/app/temp`: 임시 파일 저장소
-- `../output:/app/output`: 변환된 이미지 출력 디렉토리
-
-
-docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
