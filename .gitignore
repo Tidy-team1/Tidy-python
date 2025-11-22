@@ -3,4 +3,4 @@ __pycache__/
 temp/
 output/
 .env
-
+.env.*

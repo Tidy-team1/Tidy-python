@@ -1,0 +1,7 @@
+version: "3.9"
+
+services:
+  tidy-python:
+    environment:
+      - PY_ENV=dev
+    volumes: []   # dev에서는 볼륨 제거
