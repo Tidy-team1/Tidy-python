@@ -3,3 +3,5 @@ uvicorn
 python-multipart
 python-pptx
 PyMuPDF
+boto3
+python-dotenv
