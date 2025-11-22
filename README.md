@@ -48,3 +48,6 @@ docker-compose logs -f
 
 - `../temp:/app/temp`: 임시 파일 저장소
 - `../output:/app/output`: 변환된 이미지 출력 디렉토리
+
+
+docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
