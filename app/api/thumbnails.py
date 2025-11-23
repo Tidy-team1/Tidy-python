@@ -2,16 +2,14 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import os
 import tempfile
-import boto3
 from app.core.logger import logger
+from app.core.config import settings
+from app.services.storage_service import get_s3_client
 from app.services.ppt_to_pdf import convert_ppt_to_pdf
 from app.services.pdf_to_images import convert_pdf_to_images
 from app.utils.s3_key_builder import original_ppt_key
 
 router = APIRouter()
-s3 = boto3.client("s3")
-
-BUCKET = os.getenv("AWS_S3_BUCKET_NAME")
 
 
 class ThumbnailRequest(BaseModel):
@@ -34,7 +32,8 @@ async def convert_ppt(
 
         with tempfile.TemporaryDirectory() as tmpdir:
             ppt_local = os.path.join(tmpdir, "original.pptx")
-            s3.download_file(BUCKET, original_key, ppt_local)
+            s3 = get_s3_client()
+            s3.download_file(settings.AWS_S3_BUCKET_NAME, original_key, ppt_local)
 
             # 1) PPT → PDF
             pdf_path = convert_ppt_to_pdf(ppt_local, tmpdir)
