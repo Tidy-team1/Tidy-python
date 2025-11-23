@@ -1,5 +1,6 @@
 # app/services/storage_service.py
 import boto3
+import os
 from app.core.config import settings
 
 
@@ -9,10 +10,25 @@ from app.core.config import settings
 
 def get_s3_client():
     """
-    dev 환경 → IAM ROLE 자동 인증
-    local 환경 → ~/.aws/credentials 사용
+    dev 환경 → IAM ROLE 자동 인증 (환경변수 또는 EC2/ECS 메타데이터)
+    local 환경 → 환경변수 또는 ~/.aws/credentials 사용
     """
-    return boto3.client("s3", region_name=settings.AWS_REGION)
+    # 환경변수로 자격 증명이 제공되면 사용
+    aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+    
+    if aws_access_key_id and aws_secret_access_key:
+        # 환경변수로 자격 증명 제공
+        return boto3.client(
+            "s3",
+            region_name=settings.AWS_REGION,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key
+        )
+    else:
+        # 환경변수가 없으면 boto3의 기본 자격 증명 체인 사용
+        # (IAM Role, ~/.aws/credentials, 환경변수 순서로 자동 탐색)
+        return boto3.client("s3", region_name=settings.AWS_REGION)
 
 
 ### ======================
