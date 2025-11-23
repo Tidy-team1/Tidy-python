@@ -1,28 +1,24 @@
 # Tidy Python
 
-## 🚀 빠른 시작
-
+## 🚀 실행 방법
 ### 사전 요구사항
-
 - Docker
 
 ### Docker를 사용한 실행
 
-**처음 실행 시 (빌드 포함)**
+**빌드(로컬)**
 ```bash
-docker-compose up -d --build
+docker compose -f docker-compose.yml -f docker-compose.local.yml build
 ```
 
-**이후 실행 시**
+**이후 백그라운드 실행 시**
 ```bash
 docker-compose up -d
 ```
 
-## 🐳 Docker 명령어
-
-**서비스 시작**
+**빌드, 실행 한번에**
 ```bash
-docker-compose up -d
+docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 ```
 
 **서비스 중지**
@@ -30,12 +26,7 @@ docker-compose up -d
 docker-compose down
 ```
 
-**서비스 재빌드 및 시작**
-```bash
-docker-compose up -d --build
-```
-
 **로그 확인**
 ```bash
-docker-compose logs -f
+docker logs -f tidy-python
 ```
