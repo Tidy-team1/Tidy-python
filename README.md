@@ -30,3 +30,16 @@ docker-compose down
 ```bash
 docker logs -f tidy-python
 ```
+
+## 📁 프로젝트 구조
+```bash
+tidy-python/
+│
+├── docker-compose.yml            # 공통 설정
+├── docker-compose.local.yml      # 로컬 개발용 override
+├── docker-compose.dev.yml        # DEV 서버용 override
+│
+├── app/                          # FastAPI 소스코드
+├── Dockerfile
+└── README.md
+```
