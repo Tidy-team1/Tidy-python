@@ -4,6 +4,12 @@ services:
   tidy-python:
     environment:
       - PY_ENV=local
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_REGION=${AWS_REGION}
+      # 자격 증명은 환경변수로 전달하거나 ~/.aws/credentials 사용
+      # 환경변수가 있으면 우선 사용, 없으면 ~/.aws/credentials 자동 탐색
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
     volumes:
       - ~/.aws:/root/.aws:ro
-      - ./:/app          # 로컬에서는 코드 실시간 반영
+      - ./:/app
