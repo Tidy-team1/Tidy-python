@@ -9,6 +9,9 @@ if ENV == "dev":
 else:
     load_dotenv(".env.local")
 
+# 환경변수가 없어도 동작하도록 docker-compose의 environment에서도 읽을 수 있도록 함
+# .env 파일이 없어도 docker-compose의 environment에서 설정한 값 사용 가능
+
 
 class Settings:
     # 현재 환경
@@ -17,7 +20,7 @@ class Settings:
     # 항상 S3 사용
     STORAGE_MODE = "s3"
 
-    # S3 필수 설정
+    # S3 필수 설정 (환경변수 또는 docker-compose의 environment에서 읽음)
     AWS_S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME")
     AWS_REGION = os.getenv("AWS_REGION")
 
@@ -31,3 +34,9 @@ class Settings:
 
 
 settings = Settings()
+
+# Settings 인스턴스 생성 후 검증
+if not settings.AWS_S3_BUCKET_NAME:
+    raise ValueError("AWS_S3_BUCKET_NAME 환경변수가 설정되지 않았습니다.")
+if not settings.AWS_REGION:
+    raise ValueError("AWS_REGION 환경변수가 설정되지 않았습니다.")
