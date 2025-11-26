@@ -13,7 +13,7 @@ def convert_pdf_to_images(pdf_path: str, space_id: int, presentation_id: int) ->
         img_bytes = pix.tobytes("png")
 
         # S3 key 생성
-        key = slide_image_key(space_id, presentation_id, idx + 1)
+        key = slide_image_key(space_id, presentation_id, idx)
 
         # 저장 (하지만 반환은 URL이 아니라 key)
         save_file(key, img_bytes)
