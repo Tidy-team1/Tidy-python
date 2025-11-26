@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from app.core.logger import setup_logger
-from app.api.presentation_api import router as presentation_router
 from app.api.thumbnails import router as thumbnails_router
 from app.api.ananlysis import router as analysis_router
 
