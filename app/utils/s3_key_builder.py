@@ -24,22 +24,11 @@ def original_ppt_key(space_id: int, presentation_id: int) -> str:
 # Slides (이미지)
 # =========================
 
-def slide_image_key(space_id: int, presentation_id: int, slide_no: int) -> str:
+def slide_image_key(space_id: int, presentation_id: int, slide_idx: int) -> str:
     """
     슬라이드 이미지: slide_1.png, slide_2.png ...
     """
-    return f"{base_path(space_id, presentation_id)}/slides/slide_{slide_no}.png"
-
-
-# =========================
-# Thumbnails
-# =========================
-
-def thumbnail_key(space_id: int, presentation_id: int, slide_no: int) -> str:
-    """
-    썸네일 이미지: thumb_1.png, thumb_2.png ...
-    """
-    return f"{base_path(space_id, presentation_id)}/thumbnails/thumb_{slide_no}.png"
+    return f"{base_path(space_id, presentation_id)}/slides/slide_{slide_idx}.png"
 
 
 # =========================
