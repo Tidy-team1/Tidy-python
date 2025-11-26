@@ -18,5 +18,5 @@ def review_analysis(req: ReviewAnalysisRequest):
         presentation_id=req.presentationId,
         options=req.options
     )
-    return {"result": result}
+    return result
 
