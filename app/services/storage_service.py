@@ -1,7 +1,10 @@
 # app/services/storage_service.py
 import boto3
 import os
+import tempfile
 from app.core.config import settings
+from app.utils.s3_utils import download_from_s3
+from app.utils.s3_key_builder import original_ppt_key
 
 
 ### ======================
@@ -87,3 +90,22 @@ def delete_presentation_folder(space_id: int, presentation_id: int):
     )
 
     print(f"[storage_service] Deleted presentation folder: {prefix}")
+
+
+def download_presentation(space_id: int, presentation_id: int) -> str:
+    """
+    S3에서 pptx 파일을 로컬 임시 파일로 다운로드하여 로컬 경로 반환한다.
+    예: /tmp/tmpabcd1234.pptx
+    """
+
+    # 1) S3 key 생성
+    s3_key = original_ppt_key(space_id, presentation_id)
+    # 예: "spaces/{spaceId}/presentations/{presId}/file.pptx"
+
+    # 2) 로컬 temp 파일 생성
+    _, tmp_path = tempfile.mkstemp(suffix=".pptx")
+
+    # 3) 다운로드 실행
+    download_from_s3(s3_key, tmp_path)
+
+    return tmp_path
