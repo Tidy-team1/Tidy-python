@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.services.review_analysis_service import analyze_review
+from app.services.analysis.review_analysis_service import analyze_review
 from app.core.logger import logger
 
 router = APIRouter(prefix="/analysis")

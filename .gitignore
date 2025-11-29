@@ -4,3 +4,5 @@ temp/
 output/
 .env
 .env.*
+tests/
+venv/
