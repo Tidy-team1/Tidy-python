@@ -24,7 +24,7 @@ class TextClassifier:
                 PP_PLACEHOLDER_TYPE.SUBTITLE,
             ]:
                 return "title"
-            elif p_type in [PP_PLACEHOLDER_TYPE.BODY, PP_PLACEHOLDER_TYPE.CONTENT]:
+            elif p_type in [PP_PLACEHOLDER_TYPE.BODY]:
                 return "body"
         except ValueError:
             pass
@@ -216,7 +216,7 @@ class FontConsistencyAnalyzer(BaseAnalyzer):
                 slide_issues.append(
                     IssueResult(
                         type=self.analyzer_type,
-                        message="제목 폰트 크기를 일관된 크기(최빈값)에 맞추는 것이 좋습니다.",
+                        message="제목의 글자 크기가 다른 슬라이드와 일관되지 않습니다.",
                         element=IssueElement(
                             shapeId=shape.shape_id,
                             elementIndex=0,
@@ -230,13 +230,6 @@ class FontConsistencyAnalyzer(BaseAnalyzer):
                         details={
                             "currentSize": s["font_size"],
                             "recommendedSize": expected,
-                            "group": group,  # "number" / "text"
-                            "slideAvgNumberSize": st["avg_number_size"],
-                            "slideAvgTextSize": st["avg_text_size"],
-                            "globalNumberSize": global_number_size,
-                            "globalTextSize": global_text_size,
-                            "slideNumberSpread": number_spread,
-                            "slideTextSpread": text_spread,
                         },
                     )
                 )
