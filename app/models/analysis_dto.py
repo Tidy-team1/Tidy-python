@@ -3,10 +3,10 @@ from pydantic import BaseModel
 class IssueElement(BaseModel):
     shapeId: int | None = None
     elementIndex: int | None = None
-    bboxLeft: int | None = None
-    bboxTop: int | None = None
-    bboxWidth: int | None = None
-    bboxHeight: int | None = None
+    bboxLeft: float | None = None
+    bboxTop: float | None = None
+    bboxWidth: float | None = None
+    bboxHeight: float | None = None
     text: str | None = None
     elementType: str | None = None
 
