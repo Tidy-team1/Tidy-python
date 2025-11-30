@@ -4,7 +4,7 @@ import re, statistics
 
 from app.services.analysis.base_analyzer import BaseAnalyzer
 from app.models.analysis_dto import IssueElement, IssueResult, SlideIssueResult
-
+from app.utils.ppt_utils import emu_to_px
 
 # ---------------------------------------------------------
 # 🔹 Text Classifier (제목/본문 분류 로직)
@@ -220,10 +220,10 @@ class FontConsistencyAnalyzer(BaseAnalyzer):
                         element=IssueElement(
                             shapeId=shape.shape_id,
                             elementIndex=0,
-                            bboxLeft=shape.left,
-                            bboxTop=shape.top,
-                            bboxWidth=shape.width,
-                            bboxHeight=shape.height,
+                            bboxLeft=emu_to_px(shape.left),
+                            bboxTop=emu_to_px(shape.top),
+                            bboxWidth=emu_to_px(shape.width),
+                            bboxHeight=emu_to_px(shape.height),
                             text=s["text"],
                             elementType="text",
                         ),
