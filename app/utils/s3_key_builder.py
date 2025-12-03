@@ -2,6 +2,7 @@
 
 BASE = "spaces"
 
+
 def base_path(space_id: int, presentation_id: int) -> str:
     """
     기본 경로: spaces/{spaceId}/presentations/{presentationId}
@@ -10,25 +11,58 @@ def base_path(space_id: int, presentation_id: int) -> str:
 
 
 # =========================
-# Original PPTX
+# Versioned PPTX
+# =========================
+
+def pptx_key_for_version(space_id: int, presentation_id: int, version: int) -> str:
+    """
+    버전별 PPTX 파일
+    예) spaces/{spaceId}/presentations/{presentationId}/v{version}/ppt/presentation.pptx
+    """
+    return f"{base_path(space_id, presentation_id)}/v{version}/ppt/presentation.pptx"
+
+
+# =========================
+# Versioned Slides (이미지)
+# =========================
+
+def slide_image_key_for_version(
+    space_id: int,
+    presentation_id: int,
+    version: int,
+    slide_idx: int,
+) -> str:
+    """
+    버전별 슬라이드 이미지
+    예) .../v{version}/slides/{slide_idx}.png
+    """
+    return f"{base_path(space_id, presentation_id)}/v{version}/slides/{slide_idx}.png"
+
+
+# =========================
+# 원본 PPT (v0 alias)
 # =========================
 
 def original_ppt_key(space_id: int, presentation_id: int) -> str:
     """
-    원본 PPTX 파일 (업로드된 파일 그대로)
+    업로드된 원본 PPTX는 v0 으로 간주한다.
+    기존 original/ 경로 대신 이 함수를 사용한다.
     """
-    return f"{base_path(space_id, presentation_id)}/original/presentation.pptx"
+    return pptx_key_for_version(space_id, presentation_id, 0)
 
 
 # =========================
-# Slides (이미지)
+# (레거시) 버전 없는 slide 이미지 키
 # =========================
 
 def slide_image_key(space_id: int, presentation_id: int, slide_idx: int) -> str:
     """
-    슬라이드 이미지: slide_1.png, slide_2.png ...
+    과거 코드 호환을 위한 래퍼.
+    버전 개념이 없던 시절의 slide 이미지 경로를 사용하던 코드가
+    있더라도 v0 기준으로 동작하도록 매핑한다.
+    (가능하면 slide_image_key_for_version(...) 으로 교체할 것)
     """
-    return f"{base_path(space_id, presentation_id)}/slides/slide_{slide_idx}.png"
+    return slide_image_key_for_version(space_id, presentation_id, 0, slide_idx)
 
 
 # =========================
@@ -39,6 +73,7 @@ def analysis_key(space_id: int, presentation_id: int, filename: str) -> str:
     """
     분석 결과 파일 (JSON 등)
     예: layout.json, text.json, style.json ...
+    version과는 독립적으로 관리한다고 가정.
     """
     return f"{base_path(space_id, presentation_id)}/analysis/{filename}"
 
