@@ -18,6 +18,9 @@ from app.utils.s3_key_builder import (
 from app.services.ppt_to_pdf import convert_ppt_to_pdf
 from app.services.pdf_to_images import convert_pdf_to_images
 
+from pptx.enum.text import MSO_AUTO_SIZE, MSO_VERTICAL_ANCHOR
+from pptx.util import Pt
+
 
 def process_modify(batch):
     """
@@ -126,13 +129,12 @@ def apply_single_feedback(prs, item):
 # -----------------------------
 # 각 규칙 apply 함수
 # -----------------------------
+from pptx.util import Pt
+
 def apply_font_consistency(slide, item, details):
     """
-    details 예시:
-    {
-        "currentSize": 30.19,
-        "recommendedSize": 74.0
-    }
+    글자 크기만 recommendedSize 로 변경.
+    텍스트박스 크기/위치 조정 없음.
     """
 
     if item.shapeId is None:
@@ -148,13 +150,6 @@ def apply_font_consistency(slide, item, details):
         )
         return
 
-    scale = recommended / current_size
-
-    logger.info(
-        f"[font_consistency] shapeId={item.shapeId}, "
-        f"currentSize={current_size}, recommendedSize={recommended}, scale={scale:.2f}"
-    )
-
     updated = False
 
     for shape in slide.shapes:
@@ -163,24 +158,19 @@ def apply_font_consistency(slide, item, details):
         if not shape.has_text_frame:
             continue
 
-        # --- 1) 폰트 크기 변경 ---
-        for paragraph in shape.text_frame.paragraphs:
+        tf = shape.text_frame
+
+        # ---------------------------
+        # ONLY change font size
+        # ---------------------------
+        for paragraph in tf.paragraphs:
             for run in paragraph.runs:
                 if run.font:
                     run.font.size = Pt(recommended)
 
-        # --- 2) 텍스트박스 높이 조정: top 유지 + 아래로 확대 ---
-        old_top = shape.top
-        old_height = shape.height
-
-        new_height = int(old_height * scale)
-
-        shape.top = old_top            # top 그대로
-        shape.height = new_height      # 아래 방향으로 커짐
-
         logger.info(
             f"[font_consistency] shapeId={item.shapeId} "
-            f"height {old_height} → {new_height}, top={shape.top}"
+            f"font {current_size} → {recommended}"
         )
 
         updated = True
