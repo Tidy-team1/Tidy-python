@@ -24,14 +24,14 @@ from app.services.analysis.analyzers.design_feedback import DesignFeedbackAnalyz
 
 # Utils
 from app.utils.ppt_parser import parse_presentation
-from app.utils.slide_renderer import export_slide_images
+from app.utils.s3_utils import load_slide_images
 
 
 # =========================================================
 # 🔹 Global Config & Model Caching
 # =========================================================
 
-CLIP_MODULE_PATH = Path(__file__).resolve().parents[3] / "clip"
+CLIP_MODULE_PATH = Path(__file__).resolve().parents[3] / "tidyclip"
 CLIP_WEIGHTS_PATH = CLIP_MODULE_PATH / "clip_linear_probe.pth"
 _CACHED_CLIP_MODEL = None
 
@@ -94,15 +94,22 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
     prs = Presentation(ppt_path)
     
     # 2. 이미지 추출 (점수 계산을 위해 항상 실행)
+    version = 0  # 리뷰 분석은 지금 항상 v0 기준
     temp_root = Path("temp")
     slide_image_dir = temp_root / str(presentation_id) / "full_slides"
     
-    # 폴더가 비어있으면 추출
+    slide_image_dir.mkdir(parents=True, exist_ok=True)
+
     try:
-        if not slide_image_dir.exists() or not any(slide_image_dir.iterdir()):
-            export_slide_images(ppt_path, slide_image_dir)
+        slide_image_paths = load_slide_images(
+            space_id=space_id,
+            presentation_id=presentation_id,
+            version=version,
+            tmpdir=str(slide_image_dir)
+        )
     except Exception as e:
-        print(f"[WARN] Slide export failed: {e}")
+        raise RuntimeError(f"Failed to load slide images from S3: {e}")
+
 
     # 3. [점수 강제 계산] 옵션 여부와 상관없이 실행
     # 키 이름을 DTO와 동일하게 'xxx_score'로 통일합니다.

@@ -2,6 +2,7 @@ FROM python:3.10-slim
 
 # 시스템 패키지 설치
 RUN apt-get update && apt-get install -y \
+    git \
     libreoffice \
     fontconfig \
     unzip \

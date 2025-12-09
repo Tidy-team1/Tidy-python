@@ -10,3 +10,4 @@ torch
 torchvision
 opencv-python
 openai
+git+https://github.com/openai/CLIP.git
