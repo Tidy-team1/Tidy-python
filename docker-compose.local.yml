@@ -10,6 +10,7 @@ services:
       # 환경변수가 있으면 우선 사용, 없으면 ~/.aws/credentials 자동 탐색
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     volumes:
       - ~/.aws:/root/.aws:ro
       - ./:/app
