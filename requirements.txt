@@ -6,3 +6,7 @@ PyMuPDF
 boto3
 python-dotenv
 numpy
+torch
+torchvision
+opencv-python
+openai

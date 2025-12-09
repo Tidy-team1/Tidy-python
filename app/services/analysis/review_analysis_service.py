@@ -31,7 +31,7 @@ from app.utils.slide_renderer import export_slide_images
 # 🔹 Global Config & Model Caching
 # =========================================================
 
-CLIP_MODULE_PATH = Path(r"C:\Users\naeun\capstone_1\Tidy-python\clip")
+CLIP_MODULE_PATH = Path(__file__).resolve().parents[3] / "clip"
 CLIP_WEIGHTS_PATH = CLIP_MODULE_PATH / "clip_linear_probe.pth"
 _CACHED_CLIP_MODEL = None
 
