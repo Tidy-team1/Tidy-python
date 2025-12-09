@@ -5,7 +5,7 @@
       "issues": [
         {
           "type": "color_contrast",
-          "message": "제목 텍스트 색상(#E4DDE7)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.33, 필요: 3.0)",
+          "message": "제목 텍스트 색상(#E4DDE7)이 배경과 잘 구분되지 않습니다. (대비율: 1.33)",
           "element": {
             "shapeId": 2,
             "elementIndex": 0,
@@ -28,32 +28,8 @@
           }
         },
         {
-          "type": "color_contrast",
-          "message": "제목 텍스트 색상(#E4DDE7)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.33, 필요: 3.0)",
-          "element": {
-            "shapeId": null,
-            "elementIndex": null,
-            "bboxLeft": null,
-            "bboxTop": null,
-            "bboxWidth": null,
-            "bboxHeight": null,
-            "text": null,
-            "elementType": null
-          },
-          "details": {
-            "current": "#E4DDE7",
-            "contrast": 1.33,
-            "required": 3.0,
-            "recommended": [
-              "#9E6287",
-              "#1A191A",
-              "#FFFFFF"
-            ]
-          }
-        },
-        {
           "type": "color_contextual_suggestion",
-          "message": "'캡스톤 최종 발표'는 중요한 발표이므로 제목에 주목도 높은 색상을 사용하는 것이 좋습니다.",
+          "message": "'캡스톤 최종 발표'는 중요한 발표 제목이므로, 주목도를 높이기 위해 더 진한 색상을 사용하는 것이 좋습니다.",
           "element": {
             "shapeId": 2,
             "elementIndex": 0,
@@ -74,7 +50,7 @@
         },
         {
           "type": "design_feedback",
-          "message": "첫 장표인 만큼 임팩트가 중요한데, 제목 폰트가 너무 얇아서 힘이 없어 보여요. 굵은 고딕체를 쓰고 색상도 진한 남색으로 바꿔보세요. 텍스트 배치는 안정적입니다!",
+          "message": "첫 장표인 만큼 임팩트가 중요한데, 제목 폰트가 너무 얇아서 힘이 없어 보여요. 굵은 고딕체를 쓰고 색상도 진한 남색으로 바꿔보세요. 현재 사용한 연한 색상은 배경과 구분이 잘 안 되어서 대비가 부족해요. 텍스트 배치는 안정적입니다!",
           "element": {
             "shapeId": null,
             "elementIndex": null,
@@ -115,7 +91,7 @@
         },
         {
           "type": "color_contrast",
-          "message": "제목 텍스트 색상(#F0E4EE)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.23, 필요: 3.0)",
+          "message": "제목 텍스트 색상(#F0E4EE)이 배경과 잘 구분되지 않습니다. (대비율: 1.23)",
           "element": {
             "shapeId": 2,
             "elementIndex": 0,
@@ -141,45 +117,21 @@
           "type": "text_summarization",
           "message": "한 슬라이드에 텍스트가 너무 많으므로 요약 정리 필요",
           "element": {
-            "shapeId": null,
-            "elementIndex": null,
-            "bboxLeft": null,
-            "bboxTop": null,
-            "bboxWidth": null,
-            "bboxHeight": null,
+            "shapeId": 3,
+            "elementIndex": 1,
+            "bboxLeft": 88.0,
+            "bboxTop": 191.66666666666666,
+            "bboxWidth": 1104.0,
+            "bboxHeight": 456.8333858267717,
             "text": "문제 인식\nPPT 제작 및 점검\n사용자가 직접 만든 PPT의 품질 점검\n가독성, 심미성, 색감 대비 등에 대한 객관적인 평가 필요\n폰트 크기, 자간, 정렬 등 세부 사항 점검\n좋은 PPT와 나쁜 PPT 디자인을 구분해서 구체적인 수정 사항과 피드백을 제시하고 ‘수정’ 버튼을 눌러 사용자의 선택에 따라 수정 여부를 선택할 수 있도록 함\n모델의 정확도를 보장하기 위해 기존의 PPT dataset을 수집하여 3명이 200장 정도 라벨링을 해서 CLIP을 linear probe 훈련시켜 나머지 데이터를 autolabeling하였음\n추가로, rule based 방식을 도입하여 수식적으로 가독성과 색상 대비 점수 등을 계산",
-            "elementType": null
+            "elementType": "text_summary"
           },
           "details": {
             "current": "문제 인식\nPPT 제작 및 점검\n사용자가 직접 만든 PPT의 품질 점검\n가독성, 심미성, 색감 대비 등에 대한 객관적인 평가 필요\n폰트 크기, 자간, 정렬 등 세부 사항 점검\n좋은 PPT와 나쁜 PPT 디자인을 구분해서 구체적인 수정 사항과 피드백을 제시하고 ‘수정’ 버튼을 눌러 사용자의 선택에 따라 수정 여부를 선택할 수 있도록 함\n모델의 정확도를 보장하기 위해 기존의 PPT dataset을 수집하여 3명이 200장 정도 라벨링을 해서 CLIP을 linear probe 훈련시켜 나머지 데이터를 autolabeling하였음\n추가로, rule based 방식을 도입하여 수식적으로 가독성과 색상 대비 점수 등을 계산",
             "recommend": [
-              "사용자가 만든 PPT의 가독성, 심미성, 색감 대비 등 품질을 객관적으로 점검",
-              "폰트 크기, 자간, 정렬 등 세부 디자인 요소를 평가하고 구체적인 피드백 및 수정 제안 제공",
-              "PPT 데이터셋을 수집·라벨링하여 CLIP 모델을 훈련하고, rule-based 방식으로 가독성·색상 대비 점수 산출"
-            ]
-          }
-        },
-        {
-          "type": "color_contrast",
-          "message": "제목 텍스트 색상(#F0E4EE)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.23, 필요: 3.0)",
-          "element": {
-            "shapeId": null,
-            "elementIndex": null,
-            "bboxLeft": null,
-            "bboxTop": null,
-            "bboxWidth": null,
-            "bboxHeight": null,
-            "text": null,
-            "elementType": null
-          },
-          "details": {
-            "current": "#F0E4EE",
-            "contrast": 1.23,
-            "required": 3.0,
-            "recommended": [
-              "#6E567A",
-              "#1A191A",
-              "#FFFFFF"
+              "사용자가 만든 PPT의 품질을 가독성, 심미성, 색감 대비 등 객관적으로 평가함",
+              "폰트 크기, 자간, 정렬 등 세부 디자인 요소를 점검하고 구체적인 피드백과 수정 제안 제공",
+              "PPT 데이터셋을 수집·라벨링하여 CLIP 모델로 자동 평가 시스템을 구축하고, rule-based 방식으로 점수화함"
             ]
           }
         },
@@ -206,7 +158,7 @@
         },
         {
           "type": "design_feedback",
-          "message": "슬라이드에 텍스트가 너무 많아서 한눈에 들어오지 않아요. 핵심 포인트만 요약해서 간결하게 정리해보세요. 그리고 제목 색상이 배경과 대비가 부족해서 눈에 잘 띄지 않아요. 좀 더 진한 색상으로 바꿔보세요. 이미지 배치는 잘 되어 있어요!",
+          "message": "이 슬라이드는 텍스트가 너무 많아서 한눈에 들어오지 않아요. 핵심 내용을 요약해서 간결하게 표현하는 게 좋겠어요. 제목의 색상도 배경과 구분이 잘 안 되니, 더 진한 색상으로 바꿔서 주목도를 높여보세요. 이미지가 잘 배치되어 있어서 시각적 균형은 좋습니다.",
           "element": {
             "shapeId": null,
             "elementIndex": null,
@@ -229,7 +181,7 @@
       "issues": [
         {
           "type": "color_contrast",
-          "message": "제목 텍스트 색상(#E0DCE6)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.35, 필요: 3.0)",
+          "message": "제목 텍스트 색상(#E0DCE6)이 배경과 잘 구분되지 않습니다. (대비율: 1.35)",
           "element": {
             "shapeId": 2,
             "elementIndex": 0,
@@ -254,7 +206,7 @@
         },
         {
           "type": "color_contrast",
-          "message": "제목 텍스트 색상(#FFFFFF)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.35, 필요: 3.0)",
+          "message": "제목 텍스트 색상(#FFFFFF)이 배경과 잘 구분되지 않습니다. (대비율: 1.35)",
           "element": {
             "shapeId": 4,
             "elementIndex": 2,
@@ -278,8 +230,33 @@
           }
         },
         {
+          "type": "shape_contrast",
+          "message": "텍스트 상자(도형) 색상(#E0DCE6)이 배경과 잘 구분되지 않습니다. (대비율: 1.35)",
+          "element": {
+            "shapeId": 4,
+            "elementIndex": 2,
+            "bboxLeft": 315.29417322834644,
+            "bboxTop": 380.2353805774278,
+            "bboxWidth": 169.4117585301837,
+            "bboxHeight": 169.4117585301837,
+            "text": "가독성",
+            "elementType": "shape"
+          },
+          "details": {
+            "current": "#E0DCE6",
+            "contrast": 1.35,
+            "required": 3.0,
+            "recommended": [
+              "#6E567A",
+              "#8F7187",
+              "#19191A",
+              "#FFFFFF"
+            ]
+          }
+        },
+        {
           "type": "color_contrast",
-          "message": "제목 텍스트 색상(#FFFFFF)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.36, 필요: 3.0)",
+          "message": "제목 텍스트 색상(#FFFFFF)이 배경과 잘 구분되지 않습니다. (대비율: 1.36)",
           "element": {
             "shapeId": 6,
             "elementIndex": 4,
@@ -303,55 +280,56 @@
           }
         },
         {
-          "type": "text_summarization",
-          "message": "한 슬라이드에 텍스트가 너무 많으므로 요약 정리 필요",
+          "type": "shape_contrast",
+          "message": "텍스트 상자(도형) 색상(#EAD8E5)이 배경과 잘 구분되지 않습니다. (대비율: 1.36)",
           "element": {
-            "shapeId": null,
-            "elementIndex": null,
-            "bboxLeft": null,
-            "bboxTop": null,
-            "bboxWidth": null,
-            "bboxHeight": null,
-            "text": "기능 소개\n점검 항목\n가독성 : 텍스트 양, 폰트 크기, 자간\n심미성 : 색상 대비, 레이아웃\n통일성 : 폰트 일관성, 도형 및 색 일관성\n가독성\n심미성\n통일성",
-            "elementType": null
+            "shapeId": 6,
+            "elementIndex": 4,
+            "bboxLeft": 834.3530708661417,
+            "bboxTop": 380.23527559055117,
+            "bboxWidth": 169.4117585301837,
+            "bboxHeight": 169.4117585301837,
+            "text": "통일성",
+            "elementType": "shape"
           },
           "details": {
-            "current": "기능 소개\n점검 항목\n가독성 : 텍스트 양, 폰트 크기, 자간\n심미성 : 색상 대비, 레이아웃\n통일성 : 폰트 일관성, 도형 및 색 일관성\n가독성\n심미성\n통일성",
-            "recommend": [
-              "가독성: 텍스트 양, 폰트 크기, 자간을 점검합니다.",
-              "심미성: 색상 대비와 레이아웃을 확인합니다.",
-              "통일성: 폰트, 도형, 색상의 일관성을 평가합니다."
-            ]
-          }
-        },
-        {
-          "type": "color_contrast",
-          "message": "제목 텍스트 색상(#E0DCE6)이 배경과 충분한 대비를 이루지 않습니다. (대비율: 1.35, 필요: 3.0)",
-          "element": {
-            "shapeId": null,
-            "elementIndex": null,
-            "bboxLeft": null,
-            "bboxTop": null,
-            "bboxWidth": null,
-            "bboxHeight": null,
-            "text": null,
-            "elementType": null
-          },
-          "details": {
-            "current": "#E0DCE6",
-            "contrast": 1.35,
+            "current": "#EAD8E5",
+            "contrast": 1.36,
             "required": 3.0,
             "recommended": [
-              "#6E567A",
               "#8F7187",
-              "#19191A",
+              "#6E567A",
+              "#1A1819",
               "#FFFFFF"
             ]
           }
         },
         {
+          "type": "text_summarization",
+          "message": "한 슬라이드에 텍스트가 너무 많으므로 요약 정리 필요",
+          "element": {
+            "shapeId": 3,
+            "elementIndex": 1,
+            "bboxLeft": 88.0,
+            "bboxTop": 191.66666666666666,
+            "bboxWidth": 1104.0,
+            "bboxHeight": 456.8333858267717,
+            "text": "기능 소개\n점검 항목\n가독성 : 텍스트 양, 폰트 크기, 자간\n심미성 : 색상 대비, 레이아웃\n통일성 : 폰트 일관성, 도형 및 색 일관성\n가독성\n심미성\n통일성",
+            "elementType": "text_summary"
+          },
+          "details": {
+            "current": "기능 소개\n점검 항목\n가독성 : 텍스트 양, 폰트 크기, 자간\n심미성 : 색상 대비, 레이아웃\n통일성 : 폰트 일관성, 도형 및 색 일관성\n가독성\n심미성\n통일성",
+            "recommend": [
+              "주요 점검 항목은 가독성, 심미성, 통일성입니다.",
+              "가독성은 텍스트 양, 폰트 크기, 자간을 확인합니다.",
+              "심미성은 색상 대비와 레이아웃을 점검합니다.",
+              "통일성은 폰트, 도형, 색상의 일관성을 봅니다."
+            ]
+          }
+        },
+        {
           "type": "color_contextual_suggestion",
-          "message": "'기능 소개' 파트이므로 제목에 신뢰감을 주는 색상을 사용하는 것이 좋습니다.",
+          "message": "'기능 소개'는 중요한 정보 전달을 위한 부분이므로, 신뢰감을 주는 색상을 사용하는 것이 좋습니다.",
           "element": {
             "shapeId": 2,
             "elementIndex": 0,
@@ -366,13 +344,13 @@
             "current": "#E0DCE6",
             "recommended": [
               "#2C3E50 (신뢰)",
-              "#6E567A (가독성)"
+              "#34495E (가독성)"
             ]
           }
         },
         {
           "type": "design_feedback",
-          "message": "기능 소개 슬라이드인데, 제목이 배경과 대비가 부족해서 눈에 잘 띄지 않아요. 좀 더 진한 색상으로 바꿔보세요. 텍스트도 요약해서 간결하게 정리하면 좋겠어요. 각 항목의 색상은 잘 어울리지만, 조금 더 명확한 대비를 주면 좋을 것 같아요.",
+          "message": "기능 소개 슬라이드에서는 중요한 정보를 전달해야 하니, 제목의 색상을 더 진하게 바꿔서 강조해보세요. 현재 색상은 배경과 구분이 잘 안 돼서 눈에 잘 띄지 않아요. 텍스트 상자도 배경과 대비가 부족하니, 더 진한 색상으로 변경해보세요. 텍스트 양이 많으니, 핵심만 요약해서 간결하게 표현하는 게 좋겠어요.",
           "element": {
             "shapeId": null,
             "elementIndex": null,

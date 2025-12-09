@@ -20,7 +20,7 @@ class TextSummarizationAnalyzer(BaseAnalyzer):
         
         for slide_data in parsed["slides"]:
             slide_idx = slide_data["slide_index"]
-            
+            text_elements = [el for el in slide_data["elements"] if el["type"] == "text" and el["text"]]
             full_text = "\n".join(
                 el["text"] for el in slide_data["elements"]
                 if el["type"] == "text" and el["text"]
@@ -36,6 +36,26 @@ class TextSummarizationAnalyzer(BaseAnalyzer):
                     recommended = summary_result["summary_bullets"]
                 else:
                     recommended = ["자동 요약 불가, 수동 요약 필요"]
+
+                main_element = None
+                if text_elements:
+                    # 텍스트 길이 순으로 정렬하여 가장 긴 요소를 대표로 설정
+                    main_element = sorted(text_elements, key=lambda x: len(x["text"]), reverse=True)[0]
+
+                if main_element:
+                    issue_elem = IssueElement(
+                        shapeId=main_element["shape_id"],
+                        elementIndex=main_element["element_index"],
+                        bboxLeft=main_element["left"],
+                        bboxTop=main_element["top"],
+                        bboxWidth=main_element["width"],
+                        bboxHeight=main_element["height"],
+                        text=full_text, # 텍스트는 전체 텍스트
+                        elementType="text_summary"
+                    )
+                else:
+                    # 텍스트 요소가 없는데 텍스트가 추출된 경우
+                    issue_elem = IssueElement(text=full_text)
                 
                 results.append(
                     SlideIssueResult(
@@ -44,7 +64,8 @@ class TextSummarizationAnalyzer(BaseAnalyzer):
                             IssueResult(
                                 type=self.analyzer_type,
                                 message="한 슬라이드에 텍스트가 너무 많으므로 요약 정리 필요",
-                                element=IssueElement(text=full_text),
+                                element=issue_elem,
+                                # element=IssueElement(text=full_text),
                                 details={
                                     "current": full_text,
                                     "recommend": recommended
