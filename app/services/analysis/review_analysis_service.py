@@ -98,19 +98,17 @@ ANALYZER_MAP = {
 # =========================================================
 # 🔹 Main Service Logic
 # =========================================================
-
-def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> ReviewAnalysisResult:
-    # 1. 파일 준비
-    ppt_path = download_presentation(space_id, presentation_id)
+def analyze_review(space_id: int, presentation_id: int, version: int, options: list[str]) -> ReviewAnalysisResult:
+    # 1. 파일 준비 (요청받은 version 기반)
+    ppt_path = download_presentation(space_id, presentation_id, version)
     if not ppt_path or not Path(ppt_path).exists():
         raise FileNotFoundError(f"Presentation file not found: {ppt_path}")
+
     prs = Presentation(ppt_path)
-    
-    # 2. 이미지 추출 (점수 계산을 위해 항상 실행)
-    version = 0  # 리뷰 분석은 지금 항상 v0 기준
+
+    # 2. 이미지 추출 (요청받은 version 기반)
     temp_root = Path("temp")
-    slide_image_dir = temp_root / str(presentation_id) / "full_slides"
-    
+    slide_image_dir = temp_root / str(presentation_id) / f"v{version}" / "full_slides"
     slide_image_dir.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -122,7 +120,6 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
         )
     except Exception as e:
         raise RuntimeError(f"Failed to load slide images from S3: {e}")
-
 
     # 3. [점수 강제 계산] 옵션 여부와 상관없이 실행
     # 키 이름을 DTO와 동일하게 'xxx_score'로 통일합니다.

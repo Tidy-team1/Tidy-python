@@ -9,6 +9,7 @@ router = APIRouter(prefix="/analysis")
 class ReviewAnalysisRequest(BaseModel):
     spaceId: int
     presentationId: int
+    version: int
     options: list[str]
 
 @router.post("/review")
@@ -16,6 +17,7 @@ def review_analysis(req: ReviewAnalysisRequest):
     result = analyze_review(
         space_id=req.spaceId,
         presentation_id=req.presentationId,
+        version=req.version,
         options=req.options
     )
     return result
