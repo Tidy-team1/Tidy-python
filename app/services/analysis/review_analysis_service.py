@@ -32,12 +32,8 @@ from app.utils.s3_utils import load_slide_images
 # 🔹 Global Config & Model Caching
 # =========================================================
 
-<<<<<<< HEAD
-CLIP_MODULE_PATH = Path(__file__).resolve().parents[3] / "tidyclip"
-=======
 PROJECT_ROOT = Path(__file__).resolve().parents[3]   # Tidy-python 폴더
 CLIP_MODULE_PATH = PROJECT_ROOT / "tidyclip"
->>>>>>> 4c62c61 (pth 파일 업로드)
 CLIP_WEIGHTS_PATH = CLIP_MODULE_PATH / "clip_linear_probe.pth"
 _CACHED_CLIP_MODEL = None
 
@@ -115,7 +111,6 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
     temp_root = Path("temp")
     slide_image_dir = temp_root / str(presentation_id) / "full_slides"
     
-<<<<<<< HEAD
     slide_image_dir.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -128,28 +123,6 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
     except Exception as e:
         raise RuntimeError(f"Failed to load slide images from S3: {e}")
 
-=======
-    total_slides = len(prs.slides)
-    
-    # 이미지가 충분하지 않으면 다시 추출
-    existing = list(slide_image_dir.glob("*.png")) if slide_image_dir.exists() else []
-    
-    if len(existing) < total_slides:
-        print(f"[INFO] Exporting slides... (Found {len(existing)}/{total_slides})")
-        try:
-            export_slide_images(ppt_path, slide_image_dir)
-            
-            # [중요] 파일 시스템 동기화 대기 (최대 10초)
-            import time
-            for _ in range(20):
-                cnt = len(list(slide_image_dir.glob("*.png")))
-                if cnt >= total_slides:
-                    break
-                time.sleep(0.5)
-                
-        except Exception as e:
-            print(f"[WARN] Slide export failed: {e}")
->>>>>>> 4c62c61 (pth 파일 업로드)
 
     # 3. [점수 강제 계산] 옵션 여부와 상관없이 실행
     # 키 이름을 DTO와 동일하게 'xxx_score'로 통일합니다.
