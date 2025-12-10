@@ -74,36 +74,43 @@ def list_s3_files(prefix: str) -> list[str]:
         logger.error(f"[S3] List failed: {prefix} ({e})")
         raise
 
-def load_slide_images(space_id: int, presentation_id: int, tmpdir: str) -> list[str]:
+
+# ======================
+# 슬라이드 이미지 가져오기(버전 적용된 버전)
+# ======================
+def load_slide_images(space_id: int, presentation_id: int, version: int, tmpdir: str) -> list[str]:
     """
-    S3에 저장된 슬라이드 이미지(s3://.../slides/slide_X.png)를
-    모두 찾아 로컬 tmpdir로 다운로드하여 로컬 경로 리스트로 반환.
+    S3에 저장된 슬라이드 이미지 (0.png, 1.png, ...)를 다운로드하여
+    로컬 tmpdir 경로 리스트로 반환.
     """
+    from app.utils.s3_key_builder import base_path
 
-    from app.utils.s3_key_builder import base_path, slide_image_key
+    # 1) Prefix 생성
+    prefix = f"{base_path(space_id, presentation_id)}/v{version}/slides/"
 
-    # 1) 슬라이드 이미지 prefix 생성
-    slides_prefix = f"{base_path(space_id, presentation_id)}/slides/"
-
-    # 2) prefix 아래 파일 목록 받아오기
-    slide_keys = list_s3_files(slides_prefix)
+    # 2) S3 파일 목록 불러오기
+    slide_keys = list_s3_files(prefix)
 
     if not slide_keys:
         raise RuntimeError(
-            f"No slide images found in S3 folder: s3://{BUCKET}/{slides_prefix}"
+            f"No slide images found in S3: s3://{BUCKET}/{prefix}"
         )
 
-    # slide_n.png 순서대로 정렬
-    slide_keys = sorted(
-        slide_keys,
-        key=lambda key: int(key.split("slide_")[1].split(".")[0])
-    )
+    # 3) 파일명 숫자 기준 정렬
+    #    Key 예: .../slides/0.png → 숫자만 추출하여 정렬
+    def extract_number(key: str) -> int:
+        filename = key.split("/")[-1]     # "0.png"
+        num = filename.split(".")[0]      # "0"
+        return int(num)
 
+    slide_keys = sorted(slide_keys, key=extract_number)
+
+    # 4) 다운로드
     local_paths = []
+    os.makedirs(tmpdir, exist_ok=True)
 
-    # 3) 모든 slide_X.png 다운로드
     for key in slide_keys:
-        filename = key.split("/")[-1]  # slide_1.png
+        filename = key.split("/")[-1]
         local_path = os.path.join(tmpdir, filename)
         download_from_s3(key, local_path)
         local_paths.append(local_path)

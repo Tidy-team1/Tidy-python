@@ -6,3 +6,8 @@ PyMuPDF
 boto3
 python-dotenv
 numpy
+torch
+torchvision
+opencv-python
+openai
+git+https://github.com/openai/CLIP.git

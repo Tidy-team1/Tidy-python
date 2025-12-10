@@ -6,3 +6,6 @@ output/
 .env.*
 tests/
 venv/
+*.pth
+clip/clip_linear_probe.pth
+clip/models/*
