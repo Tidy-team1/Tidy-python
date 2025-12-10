@@ -36,6 +36,7 @@ from app.services.analysis.review_analysis_service import analyze_review
 
 # 1. 테스트할 로컬 PPTX 파일 절대 경로
 TEST_PPTX_PATH = r"C:\Users\naeun\capstone_1\Tidy-python\test.pptx"
+# TEST_PPTX_PATH = r"C:\Users\naeun\capstone_1\Tidy-python\2W4FR5QCNIDWDPDHSOPQRQFPNBUSU5HJ.pptx"
 
 # 2. 테스트할 분석 옵션들
 TEST_OPTIONS = [

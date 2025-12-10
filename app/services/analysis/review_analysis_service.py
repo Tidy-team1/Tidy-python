@@ -5,6 +5,7 @@ import torch
 from pathlib import Path
 from collections import defaultdict
 from pptx import Presentation
+import clip
 
 # DTO & Services
 from app.services.storage_service import download_presentation
@@ -31,7 +32,12 @@ from app.utils.s3_utils import load_slide_images
 # 🔹 Global Config & Model Caching
 # =========================================================
 
+<<<<<<< HEAD
 CLIP_MODULE_PATH = Path(__file__).resolve().parents[3] / "tidyclip"
+=======
+PROJECT_ROOT = Path(__file__).resolve().parents[3]   # Tidy-python 폴더
+CLIP_MODULE_PATH = PROJECT_ROOT / "tidyclip"
+>>>>>>> 4c62c61 (pth 파일 업로드)
 CLIP_WEIGHTS_PATH = CLIP_MODULE_PATH / "clip_linear_probe.pth"
 _CACHED_CLIP_MODEL = None
 
@@ -46,29 +52,40 @@ def _get_clip_model():
         sys.path.append(str(CLIP_MODULE_PATH))
     
     try:
-        from training import CLIPClassifier
+        from tidyclip.training import CLIPClassifier
     except ImportError as e:
         print(f"[ERROR] Failed to import CLIPClassifier: {e}")
         return None
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = CLIPClassifier(output_dim=5).to(device)
+    print(f"🔥 Loading Model on Device: {device}")
 
-    if not CLIP_WEIGHTS_PATH.exists():
-        print(f"[ERROR] Weights file not found: {CLIP_WEIGHTS_PATH}")
+    try:
+        # training.py 수정본(내부 clip.load) 사용
+        model = CLIPClassifier(output_dim=5, device=device).to(device)
+    except Exception as e:
+        print(f"[ERROR] Model initialization failed: {e}")
         return None
+
+    # 3. 가중치(.pth) 로드 확인
+    if not CLIP_WEIGHTS_PATH.exists():
+        print(f"[CRITICAL] Weights file missing at: {CLIP_WEIGHTS_PATH}")
+        print("-> 모델이 초기화되지 않은 상태로 실행되어 0.5 근처의 랜덤값이 나올 수 있습니다.")
+        return None # 가중치 없으면 아예 None 리턴해서 분석 스킵 유도
 
     try:
         state_dict = torch.load(CLIP_WEIGHTS_PATH, map_location=device)
-        model.load_state_dict(state_dict, strict=False)
+        # [수정] strict=True로 변경하여 구조 불일치 시 에러 발생시킴 (그래야 0.5점 문제를 잡음)
+        model.load_state_dict(state_dict, strict=True) 
         model.eval()
         _CACHED_CLIP_MODEL = model
-        print("[INFO] CLIP model loaded successfully.")
+        print("[INFO] ✅ Custom CLIP Classifier weights loaded successfully.")
         return model
     except Exception as e:
         print(f"[ERROR] Failed to load weights: {e}")
+        # 로드 실패 시 None 반환하여 0.5점 출력 방지
         return None
-
+    
 ANALYZER_MAP = {
     "font_consistency": FontConsistencyAnalyzer,
     "spelling_grammar": SpellingGrammarAnalyzer,
@@ -98,6 +115,7 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
     temp_root = Path("temp")
     slide_image_dir = temp_root / str(presentation_id) / "full_slides"
     
+<<<<<<< HEAD
     slide_image_dir.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -110,6 +128,28 @@ def analyze_review(space_id: int, presentation_id: int, options: list[str]) -> R
     except Exception as e:
         raise RuntimeError(f"Failed to load slide images from S3: {e}")
 
+=======
+    total_slides = len(prs.slides)
+    
+    # 이미지가 충분하지 않으면 다시 추출
+    existing = list(slide_image_dir.glob("*.png")) if slide_image_dir.exists() else []
+    
+    if len(existing) < total_slides:
+        print(f"[INFO] Exporting slides... (Found {len(existing)}/{total_slides})")
+        try:
+            export_slide_images(ppt_path, slide_image_dir)
+            
+            # [중요] 파일 시스템 동기화 대기 (최대 10초)
+            import time
+            for _ in range(20):
+                cnt = len(list(slide_image_dir.glob("*.png")))
+                if cnt >= total_slides:
+                    break
+                time.sleep(0.5)
+                
+        except Exception as e:
+            print(f"[WARN] Slide export failed: {e}")
+>>>>>>> 4c62c61 (pth 파일 업로드)
 
     # 3. [점수 강제 계산] 옵션 여부와 상관없이 실행
     # 키 이름을 DTO와 동일하게 'xxx_score'로 통일합니다.

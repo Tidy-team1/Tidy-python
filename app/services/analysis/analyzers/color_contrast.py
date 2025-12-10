@@ -121,7 +121,7 @@ class ColorContrastAnalyzer(BaseAnalyzer):
                         )
                         slide_issues.append(
                             IssueResult(
-                                type="shape_contrast",
+                                type="color_contrast",
                                 message=f"도형 색상({shape_color})이 배경과 잘 구분되지 않습니다. (대비율: {cr:.2f})",
                                 element=self._create_element(el, "shape"),
                                 details={
