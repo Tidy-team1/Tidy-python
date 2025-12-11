@@ -1,9 +1,9 @@
 # app/services/analysis/analyzers/image_contrast.py
 import cv2
 import numpy as np
-from typing import List
+from typing import List, Dict, Any
 from pptx import Presentation
-from pptx.enum.shapes import MSO_SHAPE_TYPE # 필수 Import
+from pptx.enum.shapes import MSO_SHAPE_TYPE
 
 from app.models.analysis_dto import IssueElement, IssueResult, SlideIssueResult
 from app.services.analysis.base_analyzer import BaseAnalyzer
@@ -22,42 +22,71 @@ class ImageContrastAnalyzer(BaseAnalyzer):
         for slide_idx, slide in enumerate(prs.slides):
             slide_issues: List[IssueResult] = []
             
-            # [수정] slide.shapes를 순회하며 PICTURE 타입만 골라냄
             for i, shape in enumerate(slide.shapes):
-                
-                # 1. 이미지가 아니면 스킵
                 if shape.shape_type != MSO_SHAPE_TYPE.PICTURE:
                     continue
                 
-                # 2. 이미지 데이터 추출 (메모리상에서 바로 처리)
                 if not hasattr(shape, "image"):
                     continue
                 
                 try:
                     image_blob = shape.image.blob
-                    # 바이너리 -> numpy array -> OpenCV 이미지로 변환
                     nparr = np.frombuffer(image_blob, np.uint8)
                     img = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
                 except Exception as e:
                     print(f"[WARN] 이미지 디코딩 실패 (Slide {slide_idx}, Shape {shape.shape_id}): {e}")
                     continue
 
-                # 3. 분석 수행
+                # 분석 수행
                 analysis = self._analyze_cv2_image(
                     img,
                     low_contrast_thresh=self.low_contrast_thresh,
                     low_alpha_thresh=self.low_alpha_thresh
                 )
 
-                # 4. 이슈 리포팅
                 if analysis["low_contrast"] or analysis["low_alpha"]:
                     issue_msgs = []
+                    
+                    # [수정] 조절 값(Adjustment Values) 계산
+                    # 백엔드/프론트엔드에서 이 값을 보고 자동으로 수치를 올릴 수 있도록 함
+                    recommended: Dict[str, float] = {}
+                    
                     if analysis["low_contrast"]:
-                        issue_msgs.append(f"대비 낮음({analysis['contrast_score']:.1f})")
+                        current_c = analysis['contrast_score']
+                        required_c = self.low_contrast_thresh
+                        diff_c = max(0, required_c - current_c) # 부족한 만큼
+                        
+                        recommended["contrast_increase"] = round(diff_c, 2) # 올려야 할 대비 값
+                        recommended["target_contrast"] = required_c
+                        
+                        issue_msgs.append(f"대비 낮음({current_c:.1f} < {required_c})")
+
                     if analysis["low_alpha"]:
-                        issue_msgs.append(f"투명도 문제({analysis['alpha_score']:.1f})")
+                        current_a = analysis['alpha_score']
+                        required_a = self.low_alpha_thresh
+                        diff_a = max(0, required_a - current_a) # 부족한 만큼
+                        
+                        recommended["alpha_increase"] = round(diff_a, 2)    # 올려야 할 투명도(알파) 값
+                        recommended["target_alpha"] = required_a
+                        
+                        issue_msgs.append(f"투명도 문제({current_a:.1f} < {required_a})")
                     
                     message = "이미지 시인성 문제: " + ", ".join(issue_msgs)
+
+                    # [수정] details 구성
+                    details_payload = {
+                        "current": "Image",
+                        "contrast": analysis['contrast_score'],
+                        "alpha_score": analysis['alpha_score'],
+                        
+                        # 기준값 정보
+                        "required_contrast": self.low_contrast_thresh,
+                        "required_alpha": self.low_alpha_thresh,
+                        "required": self.low_contrast_thresh, # color_contrast와의 호환성을 위한 대표 required 값
+                        
+                        # 조절해야 할 수치 정보 전달
+                        "recommended": recommended,
+                    }
 
                     slide_issues.append(
                         IssueResult(
@@ -73,7 +102,7 @@ class ImageContrastAnalyzer(BaseAnalyzer):
                                 text=None,
                                 elementType="image",
                             ),
-                            details=analysis
+                            details=details_payload
                         )
                     )
 
@@ -83,45 +112,29 @@ class ImageContrastAnalyzer(BaseAnalyzer):
         return results
     
     def _analyze_cv2_image(self, img, low_contrast_thresh, low_alpha_thresh):
-        """
-        OpenCV 이미지 객체를 받아 대비/투명도 분석
-        """
+        # (기존 로직과 동일)
         if img is None:
             return {
                 "status": "error", "contrast_score": 0, "alpha_score": 0,
                 "low_contrast": False, "low_alpha": False
             }
 
-        # ------------------------
-        # 1) 알파 채널 평가 (투명도)
-        # ------------------------
-        alpha_score = 255.0 # 기본값 (불투명)
+        alpha_score = 255.0
         low_alpha = False
-
-        # 채널이 4개면(BGRA) 알파 채널이 존재함
         if len(img.shape) == 3 and img.shape[2] == 4:
             alpha_channel = img[:, :, 3]
-            # 평균 알파값 계산 (0: 투명 ~ 255: 불투명)
             alpha_score = float(np.mean(alpha_channel))
-            
-            # 기준치보다 낮으면(너무 투명하면) 이슈
             if alpha_score < low_alpha_thresh:
                 low_alpha = True
 
-        # ------------------------
-        # 2) 대비(명암) 평가
-        # ------------------------
-        # BGR -> Gray 변환
         if len(img.shape) == 3:
-            # Alpha 채널이 있으면 제거하고 변환
             if img.shape[2] == 4:
                 gray = cv2.cvtColor(img[:, :, :3], cv2.COLOR_BGR2GRAY)
             else:
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         else:
-            gray = img # 이미 흑백
+            gray = img 
 
-        # 표준편차(Standard Deviation)가 곧 대비(Contrast) 점수
         contrast_score = float(np.std(gray))
         low_contrast = contrast_score < low_contrast_thresh
 
