@@ -71,40 +71,30 @@ def apply_text_summarization(slide, item, details):
         # ----------------------------------------
         # 1) 기존 paragraph 내용 전부 지움 (스타일만 남음)
         # ----------------------------------------
-        for p in tf.paragraphs:
-            for r in p.runs:
-                r.text = ""
+        tf.clear()
 
         # ----------------------------------------
         # 2) 첫 줄: recommend[0]
         # ----------------------------------------
         first_p = tf.paragraphs[0]
-        if first_p.runs:
-            run = first_p.runs[0]
-        else:
-            run = first_p.add_run()
-
+        run = first_p.add_run()
         run.text = recommend_list[0]
 
         # 스타일 복사
         copy_paragraph_style(template_p, first_p)
         copy_font_style(template_run, run)
-
-        # bullet 적용
         first_p.level = 0
 
         # ----------------------------------------
         # 3) 나머지 줄들 bullet로 추가
         # ----------------------------------------
         for line in recommend_list[1:]:
-            new_p = tf.add_paragraph()
-            run = new_p.add_run()
-            run.text = line
-
-            copy_paragraph_style(template_p, new_p)
-            copy_font_style(template_run, run)
-
-            new_p.level = 0
+            p = tf.add_paragraph()
+            r = p.add_run()
+            r.text = line
+            copy_paragraph_style(template_p, p)
+            copy_font_style(template_run, r)
+            p.level = 0
 
         updated = True
         logger.info(f"[text_summarization] shapeId={shape_id} → bullet summarized")
