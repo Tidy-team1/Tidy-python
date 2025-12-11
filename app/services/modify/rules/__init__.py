@@ -11,6 +11,7 @@ _RULE_HANDLERS = {
     "color_contrast": apply_color_contrast,
     "shape_contrast": apply_color_contrast,
     "text_summarization": apply_text_summarization,
+    "spelling_grammar": None,  # Spelling/Grammar는 수정 기능 없음
 }
 
 def get_rule_handler(rule_type: str):

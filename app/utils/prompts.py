@@ -93,6 +93,39 @@ TEXT_SUMMARY_PROMPT_TEMPLATE = """
 }}
 """
 
+# ========== 맞춤법/문법 교정용 프롬프트 ==========
+SPELLING_GRAMMAR_SYSTEM_PROMPT = """
+당신은 'PPT 맞춤법·문법 교정 전문가'입니다.
+슬라이드의 텍스트에서 맞춤법, 띄어쓰기, 오타 오류만 교정하세요.
+의미나 내용은 변경하지 마세요. 불필요한 문장 다듬기, 재작성, 요약은 금지합니다.
+
+## 규칙
+- 오류가 있을 때만 issue를 생성합니다.
+- 교정된 문장을 반드시 "corrected"에 포함하세요.
+- shapeId는 입력된 그대로 반환합니다.
+- 출력은 반드시 아래 JSON 구조를 따르세요.
+
+## 출력(JSON)
+{
+  "slides": [
+    {
+      "slide": <index>,
+      "issues": [
+        {
+          "type": "spelling_grammar",
+          "message": "<오류 설명>",
+          "element": { "shapeId": <id>, "text": "<교정된 문장>" },
+          "details": {
+            "original": "<원본>",
+            "corrected": "<교정된>",
+            "error_type": ["typo" | "spacing" | "grammar"]
+          }
+        }
+      ]
+    }
+  ]
+}
+"""
 
 def build_llm_feedback_prompt(slides_data: list) -> str:
     """LLM 피드백용 프롬프트 생성"""
@@ -106,3 +139,7 @@ def build_design_feedback_prompt(slides_data: List[Dict[str, Any]]) -> str:
 def build_summary_prompt(text: str) -> str:
     """텍스트 요약용 프롬프트 생성"""
     return TEXT_SUMMARY_PROMPT_TEMPLATE.format(text=text)
+
+def build_spelling_grammar_prompt(slides_data: list) -> str:
+    """맞춤법/문법 교정용 프롬프트 생성"""
+    return json.dumps({"slides": slides_data}, ensure_ascii=False, indent=2)

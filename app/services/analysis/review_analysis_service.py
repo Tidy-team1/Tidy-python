@@ -156,7 +156,7 @@ def analyze_review(space_id: int, presentation_id: int, version: int, options: l
     
     for opt in options:
         # LLM 관련은 후처리에서 실행
-        if opt in ["llm_feedback", "design_feedback"]: continue
+        if opt in ["llm_feedback", "design_feedback", "spelling_grammar"]: continue
         
         analyzer_cls = ANALYZER_MAP.get(opt)
         if not analyzer_cls: continue
@@ -182,7 +182,7 @@ def analyze_review(space_id: int, presentation_id: int, version: int, options: l
         issues_by_slide[res.slide].extend(res.issues)
     
     parsed_data = None
-    if "llm_feedback" in options or "design_feedback" in options:
+    if "llm_feedback" in options or "design_feedback" in options or "spelling_grammar" in options:
         parsed_data = parse_presentation(prs, ppt_path)
 
     # 5-1. LLM Contextual Issues
@@ -207,6 +207,16 @@ def analyze_review(space_id: int, presentation_id: int, version: int, options: l
             all_results.extend(design_res)
         except Exception as e:
             print(f"[ERROR] Design Feedback failed: {e}")
+
+    # 5-3. 맞춤법/문법 교정
+    if "spelling_grammar" in options:
+        print("[INFO] Running Spelling and Grammar Check...")
+        try:
+            spelling_analyzer = SpellingGrammarAnalyzer()
+            spelling_res = spelling_analyzer.analyze_with_context(parsed_data["slides"], issues_by_slide)
+            all_results.extend(spelling_res)
+        except Exception as e:
+            print(f"[ERROR] Spelling and Grammar Check failed: {e}")
 
     # 6. 최종 병합
     final_merged = _merge_results_by_slide(all_results, slide_scores)
