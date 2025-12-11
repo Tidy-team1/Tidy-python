@@ -2,77 +2,71 @@
 from pptx import Presentation
 from app.services.analysis.base_analyzer import BaseAnalyzer
 from app.models.analysis_dto import IssueElement, IssueResult, SlideIssueResult
-from app.utils.ppt_parser import parse_presentation
 from app.utils.text_summarizer import TextSummarizer
-
+from app.utils.ppt_utils import emu_to_px
 
 class TextSummarizationAnalyzer(BaseAnalyzer):
     analyzer_type = "text_summarization"
 
     def __init__(self):
-        self.summarizer = TextSummarizer(model="gpt-4.1")
-        self.min_lines = 5
-        self.min_chars = 50
+        self.summarizer = TextSummarizer(model="gpt-4.1") # 모델명은 환경에 맞게
+        # 개별 텍스트 박스 기준 임계값 (조금 더 엄격하게 잡아도 됨)
+        self.min_lines = 4 
+        self.min_chars = 40 
 
     def analyze(self, prs: Presentation) -> list[SlideIssueResult]:
-        parsed = parse_presentation(prs)
         results = []
         
-        for slide_data in parsed["slides"]:
-            slide_idx = slide_data["slide_index"]
-            text_elements = [el for el in slide_data["elements"] if el["type"] == "text" and el["text"]]
-            full_text = "\n".join(
-                el["text"] for el in slide_data["elements"]
-                if el["type"] == "text" and el["text"]
-            )
+        for slide_idx, slide in enumerate(prs.slides):
+            slide_issues = []
             
-            lines = full_text.strip().splitlines()
-            
-            if len(lines) >= self.min_lines or len(full_text) >= self.min_chars:
-                # 요약 호출
-                summary_result = self.summarizer.summarize(full_text)
+            # [변경] 슬라이드 전체 텍스트가 아니라, 각 Shape(요소)별로 순회
+            for i, shape in enumerate(slide.shapes):
                 
-                if summary_result and "summary_bullets" in summary_result:
-                    recommended = summary_result["summary_bullets"]
-                else:
-                    recommended = ["자동 요약 불가, 수동 요약 필요"]
+                # 1. 텍스트 프레임이 있고, 텍스트가 존재하는지 확인
+                if not shape.has_text_frame or not shape.text.strip():
+                    continue
 
-                main_element = None
-                if text_elements:
-                    # 텍스트 길이 순으로 정렬하여 가장 긴 요소를 대표로 설정
-                    main_element = sorted(text_elements, key=lambda x: len(x["text"]), reverse=True)[0]
+                raw_text = shape.text.strip()
+                lines = raw_text.splitlines()
 
-                if main_element:
+                # 2. [임계값 체크] 해당 박스의 텍스트가 요약이 필요한 수준인가?
+                if len(lines) >= self.min_lines or len(raw_text) >= self.min_chars:
+                    
+                    # 3. 요약 수행 (해당 텍스트 박스 내용만)
+                    summary_result = self.summarizer.summarize(raw_text)
+                    
+                    if summary_result and "summary_bullets" in summary_result:
+                        recommended = summary_result["summary_bullets"]
+                    else:
+                        # 요약 실패 시 스킵하거나 에러 메시지
+                        continue 
+
+                    # 4. 이슈 등록 (Shape ID 필수)
                     issue_elem = IssueElement(
-                        shapeId=main_element["shape_id"],
-                        elementIndex=main_element["element_index"],
-                        bboxLeft=main_element["left"],
-                        bboxTop=main_element["top"],
-                        bboxWidth=main_element["width"],
-                        bboxHeight=main_element["height"],
-                        text=full_text, # 텍스트는 전체 텍스트
-                        elementType="text_summary"
+                        shapeId=shape.shape_id,
+                        elementIndex=i,
+                        bboxLeft=emu_to_px(shape.left),
+                        bboxTop=emu_to_px(shape.top),
+                        bboxWidth=emu_to_px(shape.width),
+                        bboxHeight=emu_to_px(shape.height),
+                        text=raw_text,
+                        elementType="text_box"
                     )
-                else:
-                    # 텍스트 요소가 없는데 텍스트가 추출된 경우
-                    issue_elem = IssueElement(text=full_text)
-                
-                results.append(
-                    SlideIssueResult(
-                        slide=slide_idx,
-                        issues=[
-                            IssueResult(
-                                type=self.analyzer_type,
-                                message="한 슬라이드에 텍스트가 너무 많으므로 요약 정리 필요",
-                                element=issue_elem,
-                                # element=IssueElement(text=full_text),
-                                details={
-                                    "current": full_text,
-                                    "recommend": recommended
-                                }
-                            )
-                        ]
+
+                    slide_issues.append(
+                        IssueResult(
+                            type=self.analyzer_type,
+                            message="텍스트 박스의 내용이 너무 길어 가독성이 떨어집니다.",
+                            element=issue_elem,
+                            details={
+                                "current": raw_text,
+                                "recommend": recommended # 리스트 형태 ["요약1", "요약2"]
+                            }
+                        )
                     )
-                )
+
+            if slide_issues:
+                results.append(SlideIssueResult(slide=slide_idx, issues=slide_issues))
         
         return results
