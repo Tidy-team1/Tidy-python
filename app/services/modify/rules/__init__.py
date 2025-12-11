@@ -4,6 +4,7 @@ from .font_consistency import apply_font_consistency
 from .shape_image_alignment import apply_align_shapes
 from .color_contrast import apply_color_contrast
 from .text_summarization import apply_text_summarization
+from .spelling_grammar import apply_spelling_grammar
 
 _RULE_HANDLERS = {
     "font_consistency": apply_font_consistency,
@@ -11,7 +12,7 @@ _RULE_HANDLERS = {
     "color_contrast": apply_color_contrast,
     "shape_contrast": apply_color_contrast,
     "text_summarization": apply_text_summarization,
-    "spelling_grammar": None,  # Spelling/Grammar는 수정 기능 없음
+    "spelling_grammar": apply_spelling_grammar,  # Spelling/Grammar는 수정 기능 없음
 }
 
 def get_rule_handler(rule_type: str):
