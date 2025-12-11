@@ -99,6 +99,11 @@ ANALYZER_MAP = {
 # 🔹 Main Service Logic
 # =========================================================
 def analyze_review(space_id: int, presentation_id: int, version: int, options: list[str]) -> ReviewAnalysisResult:
+    # 🔍 선택된 옵션 로그 출력
+    print("====================================================")
+    print(f"[OPTIONS] Selected: {', '.join(options) if options else '(none)'}")
+    print("====================================================")
+
     # 1. 파일 준비 (요청받은 version 기반)
     ppt_path = download_presentation(space_id, presentation_id, version)
     if not ppt_path or not Path(ppt_path).exists():

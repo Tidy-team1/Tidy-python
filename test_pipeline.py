@@ -73,6 +73,7 @@ def run_test():
             result = analyze_review(
                 space_id=MOCK_SPACE_ID, 
                 presentation_id=MOCK_PRESENTATION_ID, 
+                version=1,
                 options=TEST_OPTIONS
             )
             
