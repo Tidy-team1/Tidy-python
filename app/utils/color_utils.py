@@ -10,6 +10,15 @@ def hex_to_rgb(hex_color):
     b = int(hex_color[4:6], 16) / 255
     return (r, g, b)
 
+def hex_to_rgb_int(hex_color):
+    """#RRGGBB → (R, G, B) 정수"""
+    hex_color = hex_color.replace("#", "").strip()
+    return (
+        int(hex_color[0:2], 16),
+        int(hex_color[2:4], 16),
+        int(hex_color[4:6], 16),
+    )
+
 def rgb_to_hex(rgb):
     r = int(max(0, min(1, rgb[0])) * 255)
     g = int(max(0, min(1, rgb[1])) * 255)

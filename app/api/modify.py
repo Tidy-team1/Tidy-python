@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models.modify_dto import ApplyFeedbackBatchPayload
-from app.services.modify_service import process_modify
+from app.services.modify.service import process_modify
 
 router = APIRouter()
 
